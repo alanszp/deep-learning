@@ -15,7 +15,7 @@ init = Input(X=[], Y=[])
 m = reduce(process_input, m, init)
 nx = len(m.X[0])
 
-X = np.matrix(m.X).transpose()
+X = np.matrix(m.X).T
 Y = np.matrix(m.Y)
 
 
@@ -32,9 +32,8 @@ print ''
 alpha = 1
 
 for steps in range(5000):
-	Z = np.dot(W.transpose(), X) + b
+	Z = np.dot(W.T, X) + b
 	A = 1/(1 + np.exp(-Z))
-	At = A.transpose()
 	
 	# print ''
 	# print '----------'
@@ -43,13 +42,13 @@ for steps in range(5000):
 	
 	dZ = A - Y
 
-	L = -(np.dot(Y, np.log(At)) + np.dot((1-Y), np.log(1 - At)))	
+	L = -(np.dot(Y, np.log(A.T)) + np.dot((1-Y), np.log(1 - A.T)))
 
 	J = L / mx
-	dW = X * dZ.transpose() / mx
+	dW = X * dZ.T / mx
 	db = np.sum(dZ) / mx
 
-	#print 'J: ', J, ' | dw: ', dW.transpose(), ' | db: ', db
+	#print 'J: ', J, ' | dw: ', dW.T, ' | db: ', db
 
 	W -= alpha * dW
 	b -= alpha * db
@@ -58,8 +57,8 @@ for steps in range(5000):
 print ''
 print ''
 
-print 'J: ', J, ' | dw: ', dW.transpose(), ' | db: ', db
-print 'w: ', W.transpose(), ' | b: ', b
+print 'J: ', J, ' | dw: ', dW.T, ' | db: ', db
+print 'w: ', W.T, ' | b: ', b
 print ''
 print ''
 print ''
@@ -71,7 +70,7 @@ t = np.genfromtxt('test.csv', delimiter=',')
 init = Input(X=[], Y=[])
 t = reduce(process_input, t, init)
 
-X = np.matrix(t.X).transpose()
+X = np.matrix(t.X).T
 Y = np.matrix(t.Y)
 
 print 'X', np.round(X,2)
@@ -79,12 +78,11 @@ print 'Y', Y
 print 'W', W.shape
 
 
-Z = W.transpose() * X + b
+Z = W.T * X + b
 A = 1/(1 + np.exp(-Z))
-At = A.transpose()
 
-L = -(np.dot(Y, np.log(At))
-	+ np.dot((1-Y), np.log(1 - At)))
+L = -(np.dot(Y, np.log(A.T))
+	+ np.dot((1-Y), np.log(1 - A.T)))
 
 A = np.round(A)
 
