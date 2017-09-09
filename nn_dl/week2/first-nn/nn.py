@@ -1,64 +1,44 @@
 import numpy as np
 import collections
+from src import *
 
 Input = collections.namedtuple('Input', 'X Y')
-
-m = np.genfromtxt('train.csv', delimiter=',')
-mx = len(m)
 
 def process_input(acc, input):
 	acc.X.append(input[:-1])
 	acc.Y.append(input[-1])
 	return acc
 
-init = Input(X=[], Y=[])
-m = reduce(process_input, m, init)
-nx = len(m.X[0])
+m = np.genfromtxt('train.csv', delimiter=',')
+m = reduce(process_input, m, Input(X=[], Y=[]))
+
 
 X = np.matrix(m.X).T
 Y = np.matrix(m.Y)
 
+layer = Layer((2, 1))
 
-W = np.zeros((nx, 1))
-b = 0
+layer1 = Layer((2, 4))
+layer2 = Layer((4, 10))
+layer3 = Layer((10, 1))
+nn = NeuralNetwork([layer1,layer2, layer3])
+
+polimorfic = nn
 
 print 'X', X.shape
 print 'Y', Y.shape
-print 'W', W.shape
 
 print ''
-print ''
-
-alpha = 1
 
 for steps in range(5000):
-	Z = np.dot(W.T, X) + b
-	A = 1/(1 + np.exp(-Z))
-	
-	# print ''
-	# print '----------'
-	# print 'A: ', A, 'Z: ', Z, '|||  1-A: ', 1-A, ' ||| np.log(1 - A)', np.log(1 - A)
-	# print '------------'
-	
-	dZ = A - Y
+	J = polimorfic.learn(X, Y)
 
-	L = -(np.dot(Y, np.log(A.T)) + np.dot((1-Y), np.log(1 - A.T)))
+W = layer.W
+B = layer.B
+J = polimorfic.cost(polimorfic.activate(X), Y)
 
-	J = L / mx
-	dW = X * dZ.T / mx
-	db = np.sum(dZ) / mx
-
-	#print 'J: ', J, ' | dw: ', dW.T, ' | db: ', db
-
-	W -= alpha * dW
-	b -= alpha * db
-
-	#print 'w: ', W, ' | b: ', b
-print ''
-print ''
-
-print 'J: ', J, ' | dw: ', dW.T, ' | db: ', db
-print 'w: ', W.T, ' | b: ', b
+print 'J: ', J
+print 'w: ', W.T, ' | b: ', B
 print ''
 print ''
 print ''
@@ -66,26 +46,26 @@ print ''
 print ''
 
 t = np.genfromtxt('test.csv', delimiter=',')
-
-init = Input(X=[], Y=[])
-t = reduce(process_input, t, init)
+t = reduce(process_input, t, Input(X=[], Y=[]))
 
 X = np.matrix(t.X).T
 Y = np.matrix(t.Y)
+ 
+print 'X', X.shape
+print 'Y', Y.shape
 
-print 'X', np.round(X,2)
+A = polimorfic.activate(X)
+print ''
+print ''
+print ''
+print ''
+print 'A', A.shape
+print ''
+print ''
+print ''
+L = polimorfic.loss(A, Y)
+
+print ''
+print 'L', np.round(L)
 print 'Y', Y
-print 'W', W.shape
-
-
-Z = W.T * X + b
-A = 1/(1 + np.exp(-Z))
-
-L = -(np.dot(Y, np.log(A.T))
-	+ np.dot((1-Y), np.log(1 - A.T)))
-
-A = np.round(A)
-
-print Z
-print Y
-print A
+print 'A', np.round(A)
