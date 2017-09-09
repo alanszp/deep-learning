@@ -18,12 +18,11 @@ Y = np.matrix(m.Y)
 
 layer = Layer((2, 1))
 
-layer1 = Layer((2, 4))
-layer2 = Layer((4, 10))
-layer3 = Layer((10, 1))
-nn = NeuralNetwork([layer1,layer2, layer3])
+layer1 = Layer((2, 10))
+layer2 = Layer((10, 1))
+nn = NeuralNetwork([layer1,layer2])
 
-polimorfic = layer
+polimorfic = nn
 
 print 'X', X.shape
 print 'Y', Y.shape

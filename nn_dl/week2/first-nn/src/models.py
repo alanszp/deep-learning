@@ -52,14 +52,14 @@ class NeuralNetwork:
 
 		l = zip(self.layers, staked_A)
 
-		dZ = staked_A[-1] - Y
+		last_A = staked_A[-1]
+		dZ = np.nan_to_num((- last_A + Y) / (np.multiply(last_A, last_A - 1)))
 
 		for l in reversed(l):
 			layer, A = l
 			dZ = layer.correct(A, dZ)
 
 		return self.loss(staked_A[-1], Y)
-			
 
 	def loss(self, A, Y):
 		last = self.layers[-1]
