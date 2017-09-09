@@ -2,8 +2,12 @@ import numpy as np
 
 class LogisticActivation:
 
-	def activate(self, Z):
+	def compute(self, Z):
 		return  1 / (1 + np.exp(-Z))
+
+	def derivate(self, Z):
+		A = np.nan_to_num(self.compute(Z))
+		return np.multiply(A, -A + 1)
 
 class NeuralNetwork:
 
@@ -79,25 +83,33 @@ class Layer:
 		else:
 			self.activation = activation
 
+	def linear(self, X):
+		return np.dot(self.W.T, X) + self.B
+
 	def activate(self, X):
-		Z = np.dot(self.W.T, X) + self.B
-		return self.activation.activate(Z)
+		Z = self.linear(X)
+		return self.activation.compute(Z)
 
-	def correct(self, A, dZ):
+	def correct(self, A, dO):
 		mx = A.shape[1]
+		Z = self.linear(A)
+		dZ = self.activation.derivate(Z)
+		
+		dOZ = np.multiply(dZ, dO)
 
-		dW = A * dZ.T / mx
-		dB = np.sum(dZ) / mx
+		dW = A * dOZ.T / mx
+		dB = np.sum(dOZ) / mx
 
 		self.W = self.W - self.alpha * dW
 		self.B -= self.alpha * dB
 
-		return dZ
+		return dOZ
 
 	def learn(self, X, Y):
 		A = self.activate(X)
-		dZ = A - Y
-		self.correct(X, dZ)
+		dL = np.nan_to_num((- A + Y) / (np.multiply(A, A - 1)))
+
+		self.correct(X, dL)
 		return self.loss(A, Y)
 
 	def loss(self, A, Y):
