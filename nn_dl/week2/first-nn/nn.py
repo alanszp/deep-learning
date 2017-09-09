@@ -23,15 +23,15 @@ layer2 = Layer((4, 10))
 layer3 = Layer((10, 1))
 nn = NeuralNetwork([layer1,layer2, layer3])
 
-polimorfic = nn
+polimorfic = layer
 
 print 'X', X.shape
 print 'Y', Y.shape
 
 print ''
 
-for steps in range(5000):
-	J = polimorfic.learn(X, Y)
+for steps in range(1000):
+	polimorfic.learn(X, Y)
 
 W = layer.W
 B = layer.B
@@ -55,17 +55,14 @@ print 'X', X.shape
 print 'Y', Y.shape
 
 A = polimorfic.activate(X)
-print ''
-print ''
-print ''
-print ''
-print 'A', A.shape
-print ''
-print ''
-print ''
-L = polimorfic.loss(A, Y)
+print 'J', polimorfic.cost(A, Y)
 
 print ''
-print 'L', np.round(L)
-print 'Y', Y
-print 'A', np.round(A)
+print ''
+print ''
+print ''
+print ''
+print ''
+np.testing.assert_allclose(np.round(A.tolist()), Y.tolist())
+
+print 'Everything ok!'

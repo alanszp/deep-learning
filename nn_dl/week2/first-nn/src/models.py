@@ -101,7 +101,8 @@ class Layer:
 		return self.loss(A, Y)
 
 	def loss(self, A, Y):
-		return np.round(-(np.multiply(Y, np.log(A)) + np.multiply((1-Y), np.log(1 - A))), 2)
+		L = -(np.multiply(Y, np.log(A)) + np.multiply((1-Y), np.log(1 - A)))
+		return np.nan_to_num(L)
 
 	def cost(self, A, Y):
 		mx = Y.shape[1]
