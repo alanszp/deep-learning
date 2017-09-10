@@ -25,19 +25,27 @@ layer1 = Layer((2, 3))
 layer2 = Layer((3, 1))
 nn2 = NeuralNetwork([layer1,layer2])
 
-layer1 = Layer((2, 3), activation = ReluActivation())
-layer2 = Layer((3, 4), activation = ReluActivation())
+layer1 = Layer((2, 3), activation = SigmoidActivation())
+layer2 = Layer((3, 4), activation = SigmoidActivation())
 layer3 = Layer((4, 1))
 nn3 = NeuralNetwork([layer1,layer2, layer3])
 
-polimorfic = nn3
+nn4 = NeuralNetwork([
+	Layer((2, 10), activation = TanhActivation()),
+	Layer((10, 20), activation = TanhActivation()),
+	Layer((20, 50), activation = TanhActivation()),
+	Layer((50, 20), activation = TanhActivation()),
+	Layer((20, 1), activation = SigmoidActivation())
+])
+
+polimorfic = nn4
 
 print 'X', X.shape
 print 'Y', Y.shape
 
 print ''
 
-for steps in range(1000):
+for steps in range(10000):
 	cost = polimorfic.learn(X, Y)
 	if steps % 100 == 0:
             print(cost)

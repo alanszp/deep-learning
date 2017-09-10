@@ -102,7 +102,7 @@ class Layer:
 
 	def __init__(self, shape, activation = None, loss_fn = None, alpha = 0.5):
 		self.shape = shape
-		self.W = np.zeros(shape)
+		self.W = np.random.randn(shape[0], shape[1]) * 0.01
 		self.B = np.zeros((self.shape[1], 1))
 		self.alpha = alpha
 
