@@ -94,7 +94,6 @@ class Layer:
 		mx = A.shape[1]
 		Z = self.linear(A)
 		dZ = self.activation.derivate(Z)
-		
 		dOZ = np.multiply(dZ, dO)
 
 		dW = A * dOZ.T / mx
@@ -103,7 +102,9 @@ class Layer:
 		self.W = self.W - self.alpha * dW
 		self.B -= self.alpha * dB
 
-		return dOZ
+		dW_flat = np.sum(dW, axis=1) / self.shape[1]
+		dI = np.multiply(dW_flat, np.ones((1,mx)))
+		return dI
 
 	def learn(self, X, Y):
 		A = self.activate(X)

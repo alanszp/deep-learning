@@ -18,11 +18,19 @@ Y = np.matrix(m.Y)
 
 layer = Layer((2, 1))
 
-layer1 = Layer((2, 10))
-layer2 = Layer((10, 1))
-nn = NeuralNetwork([layer1,layer2])
+layer1 = Layer((2, 1))
+nn1 = NeuralNetwork([layer1])
 
-polimorfic = nn
+layer1 = Layer((2, 3))
+layer2 = Layer((3, 1))
+nn2 = NeuralNetwork([layer1,layer2])
+
+layer1 = Layer((2, 3))
+layer2 = Layer((3, 4))
+layer3 = Layer((4, 1))
+nn3 = NeuralNetwork([layer1,layer2, layer3])
+
+polimorfic = nn2
 
 print 'X', X.shape
 print 'Y', Y.shape
@@ -32,12 +40,9 @@ print ''
 for steps in range(1000):
 	polimorfic.learn(X, Y)
 
-W = layer.W
-B = layer.B
 J = polimorfic.cost(polimorfic.activate(X), Y)
 
 print 'J: ', J
-print 'w: ', W.T, ' | b: ', B
 print ''
 print ''
 print ''
