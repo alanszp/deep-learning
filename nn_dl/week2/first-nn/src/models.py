@@ -9,6 +9,18 @@ class LogisticActivation:
 		A = np.nan_to_num(self.compute(Z))
 		return np.multiply(A, -A + 1)
 
+
+class BinaryLoss:
+
+	def compute(self, A, Y):
+		L = -(np.multiply(Y, np.log(A)) + np.multiply((1-Y), np.log(1 - A)))
+		return np.nan_to_num(L)
+
+	def derivate(self, A, Y):
+		dL = (- A + Y) / (np.multiply(A, A - 1))
+		return np.nan_to_num(dL)
+
+
 class NeuralNetwork:
 
 	def __init__(self, layers):
@@ -53,7 +65,8 @@ class NeuralNetwork:
 		l = zip(self.layers, staked_A)
 
 		last_A = staked_A[-1]
-		dZ = np.nan_to_num((- last_A + Y) / (np.multiply(last_A, last_A - 1)))
+		last_layer = self.layers[-1]
+		dZ = last_layer.derivate_loss(last_A, Y)
 
 		for l in reversed(l):
 			layer, A = l
@@ -72,7 +85,7 @@ class NeuralNetwork:
 
 class Layer:
 
-	def __init__(self, shape, activation = None, alpha = 0.5):
+	def __init__(self, shape, activation = None, loss_fn = None, alpha = 0.5):
 		self.shape = shape
 		self.W = np.zeros(shape)
 		self.B = np.zeros((self.shape[1], 1))
@@ -82,6 +95,11 @@ class Layer:
 			self.activation = LogisticActivation()
 		else:
 			self.activation = activation
+
+		if loss_fn is None:
+			self.loss_fn = BinaryLoss()
+		else:
+			self.loss_fn = loss_fn
 
 	def linear(self, X):
 		return np.dot(self.W.T, X) + self.B
@@ -108,14 +126,16 @@ class Layer:
 
 	def learn(self, X, Y):
 		A = self.activate(X)
-		dL = np.nan_to_num((- A + Y) / (np.multiply(A, A - 1)))
+		dL = self.derivate_loss(A, Y)
 
 		self.correct(X, dL)
 		return self.loss(A, Y)
 
 	def loss(self, A, Y):
-		L = -(np.multiply(Y, np.log(A)) + np.multiply((1-Y), np.log(1 - A)))
-		return np.nan_to_num(L)
+		return self.loss_fn.compute(A, Y)
+
+	def derivate_loss(self, A, Y):
+		return self.loss_fn.derivate(A, Y)
 
 	def cost(self, A, Y):
 		mx = Y.shape[1]

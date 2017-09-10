@@ -30,7 +30,7 @@ layer2 = Layer((3, 4))
 layer3 = Layer((4, 1))
 nn3 = NeuralNetwork([layer1,layer2, layer3])
 
-polimorfic = nn2
+polimorfic = nn1
 
 print 'X', X.shape
 print 'Y', Y.shape
