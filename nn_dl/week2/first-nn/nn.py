@@ -21,16 +21,16 @@ layer = Layer((2, 1))
 layer1 = Layer((2, 1))
 nn1 = NeuralNetwork([layer1])
 
-layer1 = Layer((2, 3), activation=TanhActivation())
+layer1 = Layer((2, 3))
 layer2 = Layer((3, 1))
 nn2 = NeuralNetwork([layer1,layer2])
 
-layer1 = Layer((2, 3))
-layer2 = Layer((3, 4))
+layer1 = Layer((2, 3), activation = ReluActivation())
+layer2 = Layer((3, 4), activation = ReluActivation())
 layer3 = Layer((4, 1))
 nn3 = NeuralNetwork([layer1,layer2, layer3])
 
-polimorfic = layer
+polimorfic = nn3
 
 print 'X', X.shape
 print 'Y', Y.shape
@@ -38,7 +38,9 @@ print 'Y', Y.shape
 print ''
 
 for steps in range(1000):
-	polimorfic.learn(X, Y)
+	cost = polimorfic.learn(X, Y)
+	if steps % 100 == 0:
+            print(cost)
 
 J = polimorfic.cost(polimorfic.activate(X), Y)
 
@@ -52,21 +54,23 @@ print ''
 t = np.genfromtxt('test.csv', delimiter=',')
 t = reduce(process_input, t, Input(X=[], Y=[]))
 
-X = np.matrix(t.X).T
-Y = np.matrix(t.Y)
+test_X = np.matrix(t.X).T
+test_Y = np.matrix(t.Y)
  
 print 'X', X.shape
 print 'Y', Y.shape
 
-A = polimorfic.activate(X)
-print 'J', polimorfic.cost(A, Y)
+A = polimorfic.activate(test_X)
+print 'J', polimorfic.cost(A, test_Y)
+
+print ''
+print ''
+
+np.testing.assert_allclose(np.round(A.tolist(),2), test_Y.tolist())
 
 print ''
 print ''
 print ''
 print ''
-print ''
-print ''
-np.testing.assert_allclose(np.round(A.tolist()), Y.tolist())
 
 print 'Everything ok!'

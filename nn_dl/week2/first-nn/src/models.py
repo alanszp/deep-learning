@@ -18,6 +18,14 @@ class TanhActivation:
 		A = self.compute(Z)
 		return 1 - np.multiply(A, A)
 
+class ReluActivation:
+
+	def compute(self, Z):
+		return np.multiply(Z, (Z > 0))
+
+	def derivate(self, Z):
+		return 1. * (Z > 0)
+
 class BinaryLoss:
 
 	def compute(self, A, Y):
@@ -69,7 +77,6 @@ class NeuralNetwork:
 
 	def learn(self, X, Y):
 		staked_A = self.activate(X, memory = True)
-
 		l = zip(self.layers, staked_A)
 
 		last_A = staked_A[-1]
@@ -80,7 +87,7 @@ class NeuralNetwork:
 			layer, A = l
 			dZ = layer.correct(A, dZ)
 
-		return self.loss(staked_A[-1], Y)
+		return self.cost(staked_A[-1], Y)
 
 	def loss(self, A, Y):
 		last = self.layers[-1]
@@ -116,20 +123,23 @@ class Layer:
 		Z = self.linear(X)
 		return self.activation.compute(Z)
 
+	def derivate_activate(self, A):
+		Z = self.linear(A)
+		return self.activation.derivate(Z)
+
 	def correct(self, A, dO):
 		mx = A.shape[1]
-		Z = self.linear(A)
-		dZ = self.activation.derivate(Z)
-		dOZ = np.multiply(dZ, dO)
 
-		dW = A * dOZ.T / mx
-		dB = np.sum(dOZ) / mx
+		dA = self.derivate_activate(A)
+		dZ = np.multiply(dA, dO)
+
+		dW = A * dZ.T / mx
+		dB = np.sum(dZ) / mx
 
 		self.W = self.W - self.alpha * dW
 		self.B -= self.alpha * dB
 
-		dW_flat = np.sum(dW, axis=1) / self.shape[1]
-		dI = np.multiply(dW_flat, np.ones((1,mx)))
+		dI = self.W * dZ
 		return dI
 
 	def learn(self, X, Y):
@@ -137,7 +147,7 @@ class Layer:
 		dL = self.derivate_loss(A, Y)
 
 		self.correct(X, dL)
-		return self.loss(A, Y)
+		return self.cost(A, Y)
 
 	def loss(self, A, Y):
 		return self.loss_fn.compute(A, Y)
