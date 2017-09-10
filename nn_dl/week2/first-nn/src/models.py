@@ -1,6 +1,6 @@
 import numpy as np
 
-class LogisticActivation:
+class SigmoidActivation:
 
 	def compute(self, Z):
 		return  1 / (1 + np.exp(-Z))
@@ -9,6 +9,14 @@ class LogisticActivation:
 		A = np.nan_to_num(self.compute(Z))
 		return np.multiply(A, -A + 1)
 
+class TanhActivation:
+
+	def compute(self, Z):
+		return np.nan_to_num(np.tanh(Z))
+
+	def derivate(self, Z):
+		A = self.compute(Z)
+		return 1 - np.multiply(A, A)
 
 class BinaryLoss:
 
@@ -92,7 +100,7 @@ class Layer:
 		self.alpha = alpha
 
 		if activation is None:
-			self.activation = LogisticActivation()
+			self.activation = SigmoidActivation()
 		else:
 			self.activation = activation
 

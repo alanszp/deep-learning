@@ -21,7 +21,7 @@ layer = Layer((2, 1))
 layer1 = Layer((2, 1))
 nn1 = NeuralNetwork([layer1])
 
-layer1 = Layer((2, 3))
+layer1 = Layer((2, 3), activation=TanhActivation())
 layer2 = Layer((3, 1))
 nn2 = NeuralNetwork([layer1,layer2])
 
@@ -30,7 +30,7 @@ layer2 = Layer((3, 4))
 layer3 = Layer((4, 1))
 nn3 = NeuralNetwork([layer1,layer2, layer3])
 
-polimorfic = nn1
+polimorfic = layer
 
 print 'X', X.shape
 print 'Y', Y.shape
